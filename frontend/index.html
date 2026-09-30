@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Credit Scoring System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        /* ==============================
+           HEADER
+        ============================== */
+
+        header {
+            background: linear-gradient(135deg, #111827, #1e3a8a);
+            color: white;
+            padding: 28px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #dbeafe;
+            font-size: 15px;
+        }
+
+        /* ==============================
+           MAIN CONTAINER
+        ============================== */
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 35px auto;
+        }
+
+        /* ==============================
+           CARD
+        ============================== */
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            margin-bottom: 8px;
+            color: #111827;
+        }
+
+        .card-description {
+            color: #6b7280;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        /* ==============================
+           FORM
+        ============================== */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 7px;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .form-group input {
+            padding: 13px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .input-help {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        /* ==============================
+           BUTTON
+        ============================== */
+
+        .button-container {
+            margin-top: 28px;
+            text-align: center;
+        }
+
+        .predict-button {
+            border: none;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 15px 35px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .predict-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+        }
+
+        .predict-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ==============================
+           RESULT CARD
+        ============================== */
+
+        #result {
+            margin-top: 25px;
+        }
+
+        .risk-card {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+            border-left: 7px solid #2563eb;
+        }
+
+        .risk-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .risk-icon {
+            font-size: 45px;
+        }
+
+        .risk-header h2 {
+            margin-bottom: 7px;
+        }
+
+        .risk-header p {
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        /* ==============================
+           SCORE
+        ============================== */
+
+        .risk-score {
+            margin-top: 28px;
+        }
+
+        .score-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .score-label span {
+            font-weight: 600;
+        }
+
+        .score-label strong {
+            font-size: 24px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 16px;
+            background: #e5e7eb;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.8s ease;
+        }
+
+        /* ==============================
+           RESULT GRID
+        ============================== */
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        .result-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .result-box span {
+            display: block;
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .result-box strong {
+            font-size: 19px;
+            color: #111827;
+        }
+
+        /* ==============================
+           ASSESSMENT
+        ============================== */
+
+        .assessment {
+            margin-top: 22px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .assessment h3 {
+            margin-bottom: 8px;
+        }
+
+        .assessment p {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        /* ==============================
+           RISK COLORS
+        ============================== */
+
+        .low-risk {
+            border-left-color: #22c55e;
+        }
+
+        .low-risk .progress-fill {
+            background: #22c55e;
+        }
+
+        .low-risk .result-box strong {
+            color: #15803d;
+        }
+
+        .medium-risk {
+            border-left-color: #eab308;
+        }
+
+        .medium-risk .progress-fill {
+            background: #eab308;
+        }
+
+        .medium-risk .result-box strong {
+            color: #a16207;
+        }
+
+        .high-risk {
+            border-left-color: #ef4444;
+        }
+
+        .high-risk .progress-fill {
+            background: #ef4444;
+        }
+
+        .high-risk .result-box strong {
+            color: #dc2626;
+        }
+
+        /* ==============================
+           ERROR
+        ============================== */
+
+        .error-card {
+            background: #fff1f2;
+            border-left: 6px solid #ef4444;
+            padding: 20px;
+            border-radius: 12px;
+            color: #991b1b;
+        }
+
+        .error-card h3 {
+            margin-bottom: 8px;
+        }
+
+        /* ==============================
+           FOOTER
+        ============================== */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* ==============================
+           RESPONSIVE
+        ============================== */
+
+        @media (max-width: 700px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .risk-card {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+    <!-- ==============================
+         HEADER
+    ============================== -->
+
+    <header>
+
+        <h1>🤖 AI Credit Scoring System</h1>
+
+        <p>
+            Machine Learning Based Credit Risk Assessment
+        </p>
+
+    </header>
+
+
+    <!-- ==============================
+         MAIN
+    ============================== -->
+
+    <main class="container">
+
+
+        <!-- ==============================
+             INPUT CARD
+        ============================== -->
+
+        <div class="card">
+
+            <h2>Customer Financial Information</h2>
+
+            <p class="card-description">
+                Enter the customer's financial information to estimate
+                the probability of credit default.
+            </p>
+
+
+            <form id="creditForm">
+
+                <div class="form-grid">
+
+
+                    <!-- Revolving Utilization -->
+
+                    <div class="form-group">
+
+                        <label for="utilization">
+                            Revolving Utilization of Unsecured Lines
+                        </label>
+
+                        <input
+                            type="number"
+                            id="utilization"
+                            step="any"
+                            min="0"
+                            placeholder="Example: 0.3"
+                            required
+                        >
+
+                        <span class="input-help">
+                            Credit utilization ratio
+                        </span>
+
+                    </div>
+
+
+                    <!-- Age -->
+
+                    <div class="form-group">
+
+                        <label for="age">
+                            Age
+                        </label>
+
+                        <input
+                            type="number"
+                            id="age"
+                            min="18"
+                            placeholder="Example: 35"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- 30-59 Days -->
+
+                    <div class="form-group">
+
+                        <label for="late30">
+                            Number of Times 30–59 Days Past Due
+                        </label>
+
+                        <input
+                            type="number"
+                            id="late30"
+                            min="0"
+                            placeholder="Example: 2"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Debt Ratio -->
+
+                    <div class="form-group">
+
+                        <label for="debtRatio">
+                            Debt Ratio
+                        </label>
+
+                        <input
+                            type="number"
+                            id="debtRatio"
+                            step="any"
+                            min="0"
+                            placeholder="Example: 1.5"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Monthly Income -->
+
+                    <div class="form-group">
+
+                        <label for="income">
+                            Monthly Income
+                        </label>
+
+                        <input
+                            type="number"
+                            id="income"
+                            step="any"
+                            min="0"
+                            placeholder="Example: 300000"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Open Credit -->
+
+                    <div class="form-group">
+
+                        <label for="openCredit">
+                            Number of Open Credit Lines & Loans
+                        </label>
+
+                        <input
+                            type="number"
+                            id="openCredit"
+                            min="0"
+                            placeholder="Example: 2"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- 90 Days Late -->
+
+                    <div class="form-group">
+
+                        <label for="late90">
+                            Number of Times 90 Days Late
+                        </label>
+
+                        <input
+                            type="number"
+                            id="late90"
+                            min="0"
+                            placeholder="Example: 3"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Real Estate -->
+
+                    <div class="form-group">
+
+                        <label for="realEstate">
+                            Number of Real Estate Loans / Lines
+                        </label>
+
+                        <input
+                            type="number"
+                            id="realEstate"
+                            min="0"
+                            placeholder="Example: 0"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- 60-89 Days -->
+
+                    <div class="form-group">
+
+                        <label for="late60">
+                            Number of Times 60–89 Days Past Due
+                        </label>
+
+                        <input
+                            type="number"
+                            id="late60"
+                            min="0"
+                            placeholder="Example: 2"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Dependents -->
+
+                    <div class="form-group">
+
+                        <label for="dependents">
+                            Number of Dependents
+                        </label>
+
+                        <input
+                            type="number"
+                            id="dependents"
+                            min="0"
+                            placeholder="Example: 3"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- BUTTON -->
+
+                <div class="button-container">
+
+                    <button
+                        type="submit"
+                        class="predict-button"
+                        id="predictButton"
+                    >
+
+                        🔍 Check Credit Risk
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- ==============================
+             RESULT
+        ============================== -->
+
+        <div id="result"></div>
+
+
+    </main>
+
+
+    <!-- ==============================
+         FOOTER
+    ============================== -->
+
+    <footer>
+
+        AI Credit Scoring System |
+        Final Random Forest Model |
+        Decision Threshold: 65%
+
+    </footer>
+
+
+    <!-- ==============================
+         JAVASCRIPT
+    ============================== -->
+
+    <script>
+
+        document
+            .getElementById("creditForm")
+            .addEventListener("submit", async function(event) {
+
+                event.preventDefault();
+
+
+                const button =
+                    document.getElementById("predictButton");
+
+                const resultDiv =
+                    document.getElementById("result");
+
+
+                /* ==========================
+                   SHOW LOADING
+                ========================== */
+
+                button.disabled = true;
+
+                button.innerText =
+                    "⏳ Analyzing Credit Risk...";
+
+
+                resultDiv.innerHTML = `
+                    <div class="card">
+                        <p>
+                            Analyzing customer financial information...
+                        </p>
+                    </div>
+                `;
+
+
+                /* ==========================
+                   COLLECT INPUT DATA
+                ========================== */
+
+                const data = {
+
+                    RevolvingUtilizationOfUnsecuredLines:
+                        parseFloat(
+                            document.getElementById(
+                                "utilization"
+                            ).value
+                        ),
+
+                    age:
+                        parseInt(
+                            document.getElementById(
+                                "age"
+                            ).value
+                        ),
+
+                    "NumberOfTime30-59DaysPastDueNotWorse":
+                        parseInt(
+                            document.getElementById(
+                                "late30"
+                            ).value
+                        ),
+
+                    DebtRatio:
+                        parseFloat(
+                            document.getElementById(
+                                "debtRatio"
+                            ).value
+                        ),
+
+                    MonthlyIncome:
+                        parseFloat(
+                            document.getElementById(
+                                "income"
+                            ).value
+                        ),
+
+                    NumberOfOpenCreditLinesAndLoans:
+                        parseInt(
+                            document.getElementById(
+                                "openCredit"
+                            ).value
+                        ),
+
+                    NumberOfTimes90DaysLate:
+                        parseInt(
+                            document.getElementById(
+                                "late90"
+                            ).value
+                        ),
+
+                    NumberRealEstateLoansOrLines:
+                        parseInt(
+                            document.getElementById(
+                                "realEstate"
+                            ).value
+                        ),
+
+                    "NumberOfTime60-89DaysPastDueNotWorse":
+                        parseInt(
+                            document.getElementById(
+                                "late60"
+                            ).value
+                        ),
+
+                    NumberOfDependents:
+                        parseInt(
+                            document.getElementById(
+                                "dependents"
+                            ).value
+                        )
+                };
+
+
+                /* ==========================
+                   SEND REQUEST TO FLASK
+                ========================== */
+
+                try {
+
+                    const response = await fetch(
+                        "http://127.0.0.1:5000/predict",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify(data)
+                        }
+                    );
+
+
+                    /* ==========================
+                       CHECK SERVER RESPONSE
+                    ========================== */
+
+                    const result =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            result.error ||
+                            "Server returned an error."
+                        );
+
+                    }
+
+
+                    /* ==========================
+                       GET RESULT VALUES
+                    ========================== */
+
+                    const probability =
+                        Number(
+                            result.default_probability
+                        ) * 100;
+
+                    const riskLevel =
+                        result.risk_level;
+
+                    const prediction =
+                        Number(result.prediction);
+
+                    const threshold =
+                        Number(result.threshold) * 100;
+
+
+                    /* ==========================
+                       RISK SETTINGS
+                    ========================== */
+
+                    let riskClass = "";
+                    let riskIcon = "";
+                    let assessment = "";
+
+
+                    if (riskLevel === "Low Risk") {
+
+                        riskClass = "low-risk";
+
+                        riskIcon = "🟢";
+
+                        assessment =
+                            "The model identifies a relatively low likelihood of credit default.";
+
+                    }
+
+                    else if (riskLevel === "Medium Risk") {
+
+                        riskClass = "medium-risk";
+
+                        riskIcon = "🟡";
+
+                        assessment =
+                            "The model identifies a moderate likelihood of credit default. Further financial assessment is recommended.";
+
+                    }
+
+                    else {
+
+                        riskClass = "high-risk";
+
+                        riskIcon = "🔴";
+
+                        assessment =
+                            "The model identifies a relatively high likelihood of credit default. Further financial assessment is recommended.";
+
+                    }
+
+
+                    /* ==========================
+                       PREDICTION TEXT
+                    ========================== */
+
+                    const predictionText =
+                        prediction === 1
+                            ? "Default"
+                            : "No Default";
+
+
+                    /* ==========================
+                       DISPLAY RESULT
+                    ========================== */
+
+                    resultDiv.innerHTML = `
+
+                        <div class="risk-card ${riskClass}">
+
+                            <div class="risk-header">
+
+                                <div class="risk-icon">
+                                    ${riskIcon}
+                                </div>
+
+                                <div>
+
+                                    <h2>
+                                        AI Credit Risk Result
+                                    </h2>
+
+                                    <p>
+                                        ${assessment}
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- SCORE -->
+
+                            <div class="risk-score">
+
+                                <div class="score-label">
+
+                                    <span>
+                                        Default Probability
+                                    </span>
+
+                                    <strong>
+                                        ${probability.toFixed(2)}%
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="progress-bar">
+
+                                    <div
+                                        class="progress-fill"
+                                        style="
+                                            width:
+                                            ${Math.min(
+                                                Math.max(
+                                                    probability,
+                                                    0
+                                                ),
+                                                100
+                                            )}%;
+                                        "
+                                    ></div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- RESULT GRID -->
+
+                            <div class="result-grid">
+
+
+                                <div class="result-box">
+
+                                    <span>
+                                        Risk Level
+                                    </span>
+
+                                    <strong>
+                                        ${riskLevel}
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="result-box">
+
+                                    <span>
+                                        Prediction
+                                    </span>
+
+                                    <strong>
+                                        ${predictionText}
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="result-box">
+
+                                    <span>
+                                        Decision Threshold
+                                    </span>
+
+                                    <strong>
+                                        ${threshold.toFixed(0)}%
+                                    </strong>
+
+                                </div>
+
+
+                            </div>
+
+
+                            <!-- ASSESSMENT -->
+
+                            <div class="assessment">
+
+                                <h3>
+                                    🤖 AI Assessment
+                                </h3>
+
+                                <p>
+                                    ${assessment}
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                /* ==========================
+                   ERROR HANDLING
+                ========================== */
+
+                catch (error) {
+
+                    console.error(
+                        "Credit scoring error:",
+                        error
+                    );
+
+
+                    resultDiv.innerHTML = `
+
+                        <div class="error-card">
+
+                            <h3>
+                                ❌ Unable to Calculate Credit Risk
+                            </h3>
+
+                            <p>
+                                ${error.message}
+                            </p>
+
+                            <p style="margin-top:10px;">
+                                Make sure the Flask backend is running
+                                at http://127.0.0.1:5000
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                /* ==========================
+                   RESET BUTTON
+                ========================== */
+
+                finally {
+
+                    button.disabled = false;
+
+                    button.innerText =
+                        "🔍 Check Credit Risk";
+
+                }
+
+            });
+
+    </script>
+
+</body>
+
+</html>
